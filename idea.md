@@ -1,0 +1,5 @@
+- todolist 
+- % de taches effectuées 
+- heures de travail effectuées
+- musique 
+- mode nuit 
