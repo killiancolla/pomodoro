@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Todolist from './Todolist';
+import MusicPlayer from './MusicPlayer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 
-const sessionDuration = 10;
-const breakDuration = 5;
-var nbCycle = 1; 
+const sessionDuration = 25 * 60;
+const breakDuration = 5 * 60;
+
+var nbCycle = 1;
 const Timer = ({ minutes, seconds }) => {
   return (
     <div>
@@ -21,6 +25,7 @@ const App = () => {
   const [totalWorkTime, setTotalWorkTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     if (isRunning) {
@@ -38,7 +43,7 @@ const App = () => {
       if (cycles > 1 && !isBreak) {
         setIsBreak(true);
         setTimeLeft(breakTime);
-      } else if(cycles >= 1 && isBreak) {
+      } else if (cycles >= 1 && isBreak) {
         setIsBreak(false);
         setTimeLeft(sessionDuration);
         setCycles(cycles - 1);
@@ -49,7 +54,7 @@ const App = () => {
   }, [timeLeft, cycles, breakTime, isBreak]);
 
   const handleCyclesChange = (event) => {
-    nbCycle = parseInt(event.target.value); 
+    nbCycle = parseInt(event.target.value);
     setCycles(nbCycle);
   };
 
@@ -69,9 +74,17 @@ const App = () => {
     setCycles(1);
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <div className="App">
+    <div className={`App${darkMode ? ' dark-mode' : ''}`}>
+      <div className="dark-mode-toggle" onClick={toggleDarkMode}>
+        <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
+      </div>
       <h1>Méthode Pomodoro</h1>
+      <MusicPlayer audioFile="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" />
       <label htmlFor="cycles">Nombre de cycles : </label>
       <input
         type="number"
@@ -82,10 +95,10 @@ const App = () => {
         disabled={isRunning}
       />
       <br />
-      <h2>Je travaille depuis : 
+      <h2>Je travaille depuis :
         <Timer
-        minutes={Math.floor(totalWorkTime / 60)}
-        seconds={totalWorkTime % 60}
+          minutes={Math.floor(totalWorkTime / 60)}
+          seconds={totalWorkTime % 60}
         />
       </h2>
       <Timer
@@ -100,7 +113,7 @@ const App = () => {
         Arrêter
       </button>
       <button onClick={handleReset}>Réinitialiser</button>
-      <Todolist/>
+      <Todolist />
     </div>
   );
 };
