@@ -3,3 +3,9 @@
 - heures de travail effectuées
 - musique 
 - mode nuit
+- tes stats
+- tes streaks
+- ton rank
+- différentes ambiance de study room
+- tes objectifs
+- afficher session x / y 
