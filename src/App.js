@@ -5,8 +5,8 @@ import MusicPlayer from './MusicPlayer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 
-const sessionDuration = 25 * 60;
-const breakDuration = 5 * 60;
+const sessionDuration = 10;
+const breakDuration = 5;
 
 var nbCycle = 1;
 const Timer = ({ minutes, seconds }) => {
@@ -95,7 +95,7 @@ const App = () => {
         disabled={isRunning}
       />
       <br />
-      <h2>Je travaille depuis :
+      <h2>Je travaille depuuuuuis :
         <Timer
           minutes={Math.floor(totalWorkTime / 60)}
           seconds={totalWorkTime % 60}
