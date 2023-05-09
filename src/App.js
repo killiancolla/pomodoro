@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import Todolist from './Todolist';
 import MusicPlayer from './MusicPlayer';
+import LanguageSelector from './LanguageSelector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 
 const sessionDuration = 25 * 60;
 const breakDuration = 5 * 60;
@@ -19,6 +21,7 @@ const Timer = ({ minutes, seconds }) => {
 };
 
 const App = () => {
+  const { t, i18n } = useTranslation();
   const [cycles, setCycles] = useState(nbCycle);
   const [timeLeft, setTimeLeft] = useState(sessionDuration);
   const [breakTime, setBreakTime] = useState(breakDuration);
@@ -53,6 +56,10 @@ const App = () => {
     }
   }, [timeLeft, cycles, breakTime, isBreak]);
 
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
   const handleCyclesChange = (event) => {
     nbCycle = parseInt(event.target.value);
     setCycles(nbCycle);
@@ -80,12 +87,15 @@ const App = () => {
 
   return (
     <div className={`App${darkMode ? ' dark-mode' : ''}`}>
-      <div className="dark-mode-toggle" onClick={toggleDarkMode}>
-        <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
+      <div className='inline'>
+        <div className="dark-mode-toggle" onClick={toggleDarkMode}>
+          <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
+        </div>
+        <LanguageSelector changeLanguage={changeLanguage} />
       </div>
-      <h1>Méthode Pomodoro</h1>
+      <h1>{t('welcome')}</h1>
       <MusicPlayer audioFile="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" />
-      <label htmlFor="cycles">Nombre de cycles : </label>
+      <label htmlFor="cycles">{t('numberCycle')}</label>
       <input
         type="number"
         id="cycles"
@@ -95,7 +105,7 @@ const App = () => {
         disabled={isRunning}
       />
       <br />
-      <h2>Je travaille depuis :
+      <h2>{t('workSince')}
         <Timer
           minutes={Math.floor(totalWorkTime / 60)}
           seconds={totalWorkTime % 60}
@@ -107,12 +117,12 @@ const App = () => {
       />
       <br />
       <button onClick={handleStart} disabled={isRunning}>
-        Démarrer
+        {t('start')}
       </button>
       <button onClick={handleStop} disabled={!isRunning}>
-        Arrêter
+        {t('stop')}
       </button>
-      <button onClick={handleReset}>Réinitialiser</button>
+      <button onClick={handleReset}>{t('reset')}</button>
       <Todolist />
     </div>
   );
