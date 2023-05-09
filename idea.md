@@ -8,3 +8,4 @@
 - ton rank
 - différentes ambiance de study room
 - tes objectifs
+- afficher session x / y 
