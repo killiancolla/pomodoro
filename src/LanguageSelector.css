@@ -1,0 +1,39 @@
+.language-selector {
+    position: relative;
+}
+
+.language-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.language-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.language-dropdown img {
+    width: 42px;
+    height: 32px;
+    cursor: pointer;
+    margin: 4px 0;
+    object-fit: cover;
+}
+
+.language-dropdown img:hover {
+    opacity: 0.8;
+}
+
+.App.dark-mode .language-dropdown {
+    background-color: #333;
+    border-color: rgba(255, 255, 255, 0.1);
+}

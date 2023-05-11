@@ -68,3 +68,7 @@ h2 {
 .App.dark-mode .dark-mode-toggle {
   color: #f0f0f0;
 }
+
+.inline {
+  display: inline-flex;
+}
