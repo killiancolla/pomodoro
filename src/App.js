@@ -7,8 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 
-const sessionDuration = 25 * 60;
-const breakDuration = 5 * 60;
+const sessionDuration = 10;
+const breakDuration = 5;
 
 var nbCycle = 1;
 const Timer = ({ minutes, seconds }) => {
