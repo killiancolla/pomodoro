@@ -14,7 +14,8 @@ const resources = {
             ofyourtask: 'de vos tâches',
             addtask: 'Ajouter une tâche...',
             add: 'Ajouter',
-            delete: 'Supprimer'
+            delete: 'Supprimer',
+            session: 'Session'
         },
     },
     en: {
@@ -30,6 +31,7 @@ const resources = {
             addtask: 'Add a task...',
             add: 'Add',
             delete: 'Delete',
+            session: 'Session'
         },
     },
     es: {
@@ -45,6 +47,7 @@ const resources = {
             addtask: 'Agregar una tarea...',
             add: 'Agregar',
             delete: 'Eliminar',
+            session: 'Sesión'
         },
     },
     de: {
@@ -60,6 +63,7 @@ const resources = {
             addtask: 'Aufgabe hinzufügen...',
             add: 'Hinzufügen',
             delete: 'Löschen',
+            session: 'Sitzung'
         },
     },
     ja: {
@@ -70,11 +74,12 @@ const resources = {
             start: 'スタート',
             stop: 'ストップ',
             reset: 'リセット',
-            youdo: 'あなたは完了しました',
-            ofyourtask: 'あなたのタスクのうち',
+            youdo: 'タスクの',
+            ofyourtask: 'が完了しました',
             addtask: 'タスクを追加...',
             add: '追加',
             delete: '削除',
+            session: 'セッション'
         },
     }
 };

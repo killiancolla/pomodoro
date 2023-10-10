@@ -7,13 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 
-const sessionDuration = 10;
-const breakDuration = 5;
+const sessionDuration = 25 * 60;
+const breakDuration = 5 * 60;
 
 var nbCycle = 1;
 const Timer = ({ minutes, seconds }) => {
   return (
-    <div>
+    <div className='timer'>
       <span>{minutes.toString().padStart(2, '0')}</span>:
       <span>{seconds.toString().padStart(2, '0')}</span>
     </div>
@@ -78,7 +78,7 @@ const App = () => {
     setIsRunning(false);
     setIsBreak(false);
     setTimeLeft(sessionDuration);
-    setCycles(1);
+    setCycles(cycles);
   };
 
   const toggleDarkMode = () => {
@@ -105,16 +105,20 @@ const App = () => {
         disabled={isRunning}
       />
       <br />
-      <h2>{t('workSince')}
+      <h3>{t('session')} {(nbCycle - cycles + 1) + '/' + nbCycle}</h3>
+      <h2>
+        <Timer
+          minutes={Math.floor(timeLeft / 60)}
+          seconds={timeLeft % 60}
+        />
+      </h2>
+      <p>
+        {t('workSince')}
         <Timer
           minutes={Math.floor(totalWorkTime / 60)}
           seconds={totalWorkTime % 60}
         />
-      </h2>
-      <Timer
-        minutes={Math.floor(timeLeft / 60)}
-        seconds={timeLeft % 60}
-      />
+      </p>
       <br />
       <button onClick={handleStart} disabled={isRunning}>
         {t('start')}
@@ -125,7 +129,7 @@ const App = () => {
       <button onClick={handleReset}>{t('reset')}</button>
       <Todolist />
     </div>
-  );
+  )
 };
 
 export default App;
