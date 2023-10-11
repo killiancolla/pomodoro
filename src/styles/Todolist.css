@@ -1,5 +1,6 @@
-.to-do-list {
+#todolist {
   margin-top: 40px;
+  position: absolute;
 }
 
 .to-do-list input[type='text'] {
@@ -16,7 +17,6 @@
   cursor: pointer;
   border: none;
   border-radius: 4px;
-  background-color: #007bff;
   color: #ffffff;
 }
 
@@ -43,12 +43,4 @@
 
 .to-do-list li input[type='checkbox'] {
   margin-right: 10px;
-}
-
-.to-do-list li button {
-  background-color: #ff4d4d;
-}
-
-h3 {
-  color: green;
 }

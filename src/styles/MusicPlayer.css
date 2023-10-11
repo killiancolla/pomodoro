@@ -1,0 +1,14 @@
+#musicPlayer {
+    position: absolute;
+    right: -25%;
+    top: 50%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#musicPlayer>* {
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+}

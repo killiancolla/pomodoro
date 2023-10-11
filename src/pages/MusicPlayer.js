@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../styles/MusicPlayer.css'
 
 const MusicPlayer = ({ audioFile }) => {
     const [audioContext, setAudioContext] = useState(null);
@@ -43,9 +44,14 @@ const MusicPlayer = ({ audioFile }) => {
     };
 
     return (
-        <div>
-            <button onClick={play}>Play</button>
-            <button onClick={stop}>Stop</button>
+        <div id='musicPlayer' className='glass-2'>
+            <div className='header'>
+                <div className='red'></div>
+                <div className='yellow'></div>
+                <div className='green'></div>
+            </div>
+            <button className='glass-3' onClick={play}>Play</button>
+            <button className='glass-3' onClick={stop}>Stop</button>
         </div>
     );
 };

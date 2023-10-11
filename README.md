@@ -1,4 +1,4 @@
-# Pomodoro
+# [Web] Pomodoro
 ## Team
 
 - [Killian COLLA](https://github.com/killiancolla)

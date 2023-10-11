@@ -1,7 +1,7 @@
 // src/ToDoList.js
 import { exists, t } from 'i18next';
 import React, { useState } from 'react';
-import './Todolist.css';
+import '../styles/Todolist.css';
 
 const ToDoList = () => {
   const [items, setItems] = useState([]);
@@ -31,26 +31,33 @@ const ToDoList = () => {
   };
 
   return (
-    <div className="to-do-list">
+    <div id="todolist" className='glass-2'>
+      <div className='header'>
+        <div className='red'></div>
+        <div className='yellow'></div>
+        <div className='green'></div>
+      </div>
       <h2>ToDo List</h2>
       <h3>{t('youdo')} {items.length > 0 ? Math.round(((items.filter((item) => item.checked).length) * 100 / items.length)) : 0}% {t('ofyourtask')}</h3>
       <input
         type="text"
         value={inputValue}
+        className='glass-1'
         onChange={handleInputChange}
         placeholder={t('addtask')}
       />
-      <button onClick={handleAddItem}>{t('add')}</button>
+      <button className='glass-1' onClick={handleAddItem}>{t('add')}</button>
       <ul>
         {items.map((item, index) => (
           <li key={index} className={item.checked ? 'checked' : ''}>
             <input
               type="checkbox"
+              className='glass-1'
               checked={item.checked}
               onChange={() => handleToggleItem(index)}
             />
             {item.text}
-            <button onClick={() => handleRemoveItem(index)}>{t('delete')}</button>
+            <button className='glass-1' onClick={() => handleRemoveItem(index)}>{t('delete')}</button>
           </li>
         ))}
       </ul>
