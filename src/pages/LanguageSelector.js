@@ -11,7 +11,7 @@ const LanguageSelector = ({ changeLanguage }) => {
     return (
         <div className="language-selector">
             <button onClick={toggleDropdown} className="language-button">
-                🌐
+                <i class="ri-earth-fill"></i>
             </button>
             {showDropdown && (
                 <div className="language-dropdown">

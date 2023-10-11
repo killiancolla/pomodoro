@@ -4,6 +4,8 @@ import LanguageSelector from '../pages/LanguageSelector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
+import MusicPlayer from './MusicPlayer'
+import ToDoList from "./Todolist"
 
 const sessionDuration = 25 * 60;
 const breakDuration = 5 * 60;
@@ -89,6 +91,7 @@ const Home = () => {
                 <div className='red'></div>
                 <div className='yellow'></div>
                 <div className='green'></div>
+                <h2>Timer</h2>
             </div>
             <div className='inline'>
                 <div className="dark-mode-toggle" onClick={toggleDarkMode}>
@@ -130,6 +133,9 @@ const Home = () => {
                 {t('stop')}
             </button>
             <button className='glass-1' onClick={handleReset}>{t('reset')}</button>
+
+            <MusicPlayer />
+            <ToDoList />
         </div>
     )
 };

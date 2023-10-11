@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/MusicPlayer.css'
 
-const MusicPlayer = ({ audioFile }) => {
+const MusicPlayer = () => {
+
+    let audioFile = "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3";
     const [audioContext, setAudioContext] = useState(null);
     const [audioBuffer, setAudioBuffer] = useState(null);
     const [source, setSource] = useState(null);
@@ -49,6 +51,7 @@ const MusicPlayer = ({ audioFile }) => {
                 <div className='red'></div>
                 <div className='yellow'></div>
                 <div className='green'></div>
+                <h2>Music Player</h2>
             </div>
             <button className='glass-3' onClick={play}>Play</button>
             <button className='glass-3' onClick={stop}>Stop</button>

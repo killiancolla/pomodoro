@@ -36,8 +36,8 @@ const ToDoList = () => {
         <div className='red'></div>
         <div className='yellow'></div>
         <div className='green'></div>
+        <h2>ToDo List</h2>
       </div>
-      <h2>ToDo List</h2>
       <h3>{t('youdo')} {items.length > 0 ? Math.round(((items.filter((item) => item.checked).length) * 100 / items.length)) : 0}% {t('ofyourtask')}</h3>
       <input
         type="text"

@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Home from './pages/Home';
-import MusicPlayer from './pages/MusicPlayer';
-import ToDoList from './pages/Todolist';
+import 'remixicon/fonts/remixicon.css'
 
 const App = () => {
 
   return (
     <>
       <Home />
-      <MusicPlayer />
-      <ToDoList />
     </>
   )
 };
