@@ -4,8 +4,7 @@ import LanguageSelector from '../pages/LanguageSelector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
-import MusicPlayer from './MusicPlayer'
-import ToDoList from "./Todolist"
+import Draggable from 'react-draggable';
 
 const sessionDuration = 25 * 60;
 const breakDuration = 5 * 60;
@@ -21,6 +20,7 @@ const Timer = ({ minutes, seconds }) => {
 };
 
 const Home = () => {
+
     const { t, i18n } = useTranslation();
     const [cycles, setCycles] = useState(nbCycle);
     const [timeLeft, setTimeLeft] = useState(sessionDuration);
@@ -86,57 +86,58 @@ const Home = () => {
     };
 
     return (
-        <div className={`glass-1 App${darkMode ? ' dark-mode' : ''}`}>
-            <div className='header'>
-                <div className='red'></div>
-                <div className='yellow'></div>
-                <div className='green'></div>
-                <h2>Timer</h2>
-            </div>
-            <div className='inline'>
-                <div className="dark-mode-toggle" onClick={toggleDarkMode}>
-                    <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
+        <Draggable
+            positionOffset={{ x: '-50%', y: '-50%' }}
+            handle='.header' >
+            <div className={`glass-1 App${darkMode ? ' dark-mode' : ''}`}>
+                <div className='header'>
+                    <div className='red'></div>
+                    <div className='yellow'></div>
+                    <div className='green'></div>
+                    <h2>Timer</h2>
                 </div>
-                <LanguageSelector changeLanguage={changeLanguage} />
+                <div className='inline'>
+                    <div className="dark-mode-toggle" onClick={toggleDarkMode}>
+                        <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
+                    </div>
+                    <LanguageSelector changeLanguage={changeLanguage} />
+                </div>
+                <h1>{t('welcome')}</h1>
+                <label htmlFor="cycles">{t('numberCycle')}</label>
+                <input
+                    type="number"
+                    id="cycles"
+                    min="1"
+                    className='glass-1'
+                    value={cycles}
+                    onChange={handleCyclesChange}
+                    disabled={isRunning}
+                />
+                <br />
+                <h3>{t('session')} {(nbCycle - cycles + 1) + '/' + nbCycle}</h3>
+                <h2>
+                    <Timer
+                        minutes={Math.floor(timeLeft / 60)}
+                        seconds={timeLeft % 60}
+                    />
+                </h2>
+                <p>
+                    {t('workSince')}
+                    <Timer
+                        minutes={Math.floor(totalWorkTime / 60)}
+                        seconds={totalWorkTime % 60}
+                    />
+                </p>
+                <br />
+                <button className='glass-1' onClick={handleStart} disabled={isRunning}>
+                    {t('start')}
+                </button>
+                <button className='glass-1' onClick={handleStop} disabled={!isRunning}>
+                    {t('stop')}
+                </button>
+                <button className='glass-1' onClick={handleReset}>{t('reset')}</button>
             </div>
-            <h1>{t('welcome')}</h1>
-            <label htmlFor="cycles">{t('numberCycle')}</label>
-            <input
-                type="number"
-                id="cycles"
-                min="1"
-                className='glass-1'
-                value={cycles}
-                onChange={handleCyclesChange}
-                disabled={isRunning}
-            />
-            <br />
-            <h3>{t('session')} {(nbCycle - cycles + 1) + '/' + nbCycle}</h3>
-            <h2>
-                <Timer
-                    minutes={Math.floor(timeLeft / 60)}
-                    seconds={timeLeft % 60}
-                />
-            </h2>
-            <p>
-                {t('workSince')}
-                <Timer
-                    minutes={Math.floor(totalWorkTime / 60)}
-                    seconds={totalWorkTime % 60}
-                />
-            </p>
-            <br />
-            <button className='glass-1' onClick={handleStart} disabled={isRunning}>
-                {t('start')}
-            </button>
-            <button className='glass-1' onClick={handleStop} disabled={!isRunning}>
-                {t('stop')}
-            </button>
-            <button className='glass-1' onClick={handleReset}>{t('reset')}</button>
-
-            <MusicPlayer />
-            <ToDoList />
-        </div>
+        </Draggable >
     )
 };
 
