@@ -89,7 +89,7 @@ const MusicPlayer = (props) => {
         <Draggable
             handle='.header'
         >
-            <Box sx={{ width: '100%', overflow: 'hidden' }}>
+            <Box sx={{ width: 'fit-content', overflow: 'hidden' }}>
                 <div className='widget'>
                     <div className='header'>
                         <div className='red'></div>
