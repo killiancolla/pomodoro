@@ -14,28 +14,35 @@ import FastForwardRounded from '@mui/icons-material/FastForwardRounded';
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
 import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
+import { SettingsRounded } from '@mui/icons-material';
 
 const MusicPlayer = (props) => {
 
-    const theme = useTheme();
-    const duration = 200;
-    const [position, setPosition] = React.useState(32);
-    const [paused, setPaused] = React.useState(false);
-    function formatDuration(value) {
-        const minute = Math.floor(value / 60);
-        const secondLeft = value - minute * 60;
-        return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
+    const musics = {
+        "France":
+        {
+            "title": "Titre de la musique française",
+            "artist": "Maitre gims",
+            "duration": 105
+        },
+        "Japan": {
+            "title": "Titre de la musique japonaise",
+            "artist": "Imase",
+            "duration": 153
+        }
     }
+    const theme = useTheme();
+    const duration = musics[props.music].duration;
+    const [position, setPosition] = React.useState(0);
     const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
-    const lightIconColor =
-        theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
-
+    const lightIconColor = theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
     let audioFile = `/music/${props.music}.mp3`;
-    console.log(audioFile);
     const [audioContext, setAudioContext] = useState(null);
     const [audioBuffer, setAudioBuffer] = useState(null);
     const [source, setSource] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [startTime, setStartTime] = useState(null);
+    const [pausedTime, setPausedTime] = useState(0);
 
     useEffect(() => {
         if (!audioContext) {
@@ -61,16 +68,65 @@ const MusicPlayer = (props) => {
                 .then((data) => audioContext.decodeAudioData(data))
                 .then((decodedData) => setAudioBuffer(decodedData));
         }
-    }, [audioContext, audioFile]);  // Ajoutez source aux dépendances
+    }, [audioContext, audioFile]);
+
+    useEffect(() => {
+        if (isPlaying) {
+            const intervalId = setInterval(updatePosition, 100);
+            return () => clearInterval(intervalId);
+        }
+    }, [isPlaying, audioContext, source]);
+
+    function formatDuration(value) {
+        const minute = Math.floor(value / 60);
+        const secondLeft = value - minute * 60;
+        return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
+    }
+
+    const updatePosition = () => {
+        if (!isPlaying || !source || !audioContext) return;
+        if (audioContext && source) {
+            const currentTime = pausedTime + audioContext.currentTime - startTime;
+            setPosition(Math.floor(currentTime));
+        }
+    };
+
+    const handleSliderChange = (event, newValue) => {
+    };
+
+    const handleSliderCommitted = (event, newValue) => {
+        if (source) {
+            setPosition(newValue);
+            source.stop();
+            setSource(null)
+            playFromPosition(newValue);
+        }
+    };
+
+    const playFromPosition = (position) => {
+        if (audioContext && audioBuffer) {
+            const sourceNode = audioContext.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+            sourceNode.connect(audioContext.destination);
+            sourceNode.start(0, position);
+            setSource(sourceNode);
+            setIsPlaying(true);
+            setStartTime(audioContext.currentTime - position);
+            sourceNode.onended = () => {
+                setIsPlaying(false);
+            };
+        }
+    };
 
     const play = () => {
         if (audioContext && audioBuffer && !isPlaying) {
             const sourceNode = audioContext.createBufferSource();
             sourceNode.buffer = audioBuffer;
             sourceNode.connect(audioContext.destination);
-            sourceNode.start(0);
+            sourceNode.start(0, position);
             setSource(sourceNode);
             setIsPlaying(true);
+            setStartTime(audioContext.currentTime);
 
             sourceNode.onended = () => {
                 setIsPlaying(false);
@@ -78,10 +134,12 @@ const MusicPlayer = (props) => {
         }
     };
 
+
     const stop = () => {
         if (source) {
             source.stop();
             setIsPlaying(false);
+            setPausedTime(audioContext.currentTime);
         }
     };
 
@@ -105,14 +163,11 @@ const MusicPlayer = (props) => {
                             />
                         </div>
                         <Box sx={{ ml: 1.5, minWidth: 0 }}>
-                            <Typography variant="caption" color="text.secondary" fontWeight={500}>
-                                Jun Pulse
-                            </Typography>
                             <Typography noWrap>
-                                <b>คนเก่าเขาทำไว้ดี (Can&apos;t win)</b>
+                                <b>{musics[props.music].title}</b>
                             </Typography>
                             <Typography noWrap letterSpacing={-0.25}>
-                                Chilling Sunday &mdash; คนเก่าเขาทำไว้ดี
+                                {musics[props.music].artist}
                             </Typography>
                         </Box>
                     </Box>
@@ -123,7 +178,8 @@ const MusicPlayer = (props) => {
                         min={0}
                         step={1}
                         max={duration}
-                        onChange={(_, value) => setPosition(value)}
+                        // onChange={handleSliderChange}
+                        onChangeCommitted={handleSliderCommitted}
                         sx={{
                             color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
                             height: 4,
