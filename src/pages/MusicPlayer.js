@@ -22,7 +22,7 @@ const MusicPlayer = (props) => {
         "France":
         {
             "title": "Titre de la musique française",
-            "artist": "Maitre gims",
+            "artist": "cjsdkj",
             "duration": 105
         },
         "Japan": {
@@ -91,9 +91,6 @@ const MusicPlayer = (props) => {
         }
     };
 
-    const handleSliderChange = (event, newValue) => {
-    };
-
     const handleSliderCommitted = (event, newValue) => {
         if (source) {
             setPosition(newValue);
@@ -145,13 +142,17 @@ const MusicPlayer = (props) => {
 
     return (
         <Draggable
+            defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
             handle='.header'
         >
-            <Box sx={{ width: 'fit-content', overflow: 'hidden' }}>
-                <div className='widget'>
+            <Box sx={{
+                width: 'fit-content',
+                overflow: 'hidden',
+            }}>
+                <div className={`widget`}>
                     <div className='header'>
                         <div className='red'></div>
-                        <div className='yellow'></div>
+                        <div onClick={() => props.onViewChange({ "_id": 3, "name": "Music Player" })} className='yellow'></div>
                         <div className='green'></div>
                         <h2>Music Player</h2>
                     </div>

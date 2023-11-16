@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import '../styles/Todolist.css';
 import Draggable from 'react-draggable';
 
-const ToDoList = () => {
+const ToDoList = (props) => {
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState('');
 
@@ -32,11 +32,13 @@ const ToDoList = () => {
   };
 
   return (
-    <Draggable handle='.header'>
-      <div id="todolist" className='glass-2'>
+    <Draggable
+      defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
+      handle='.header'>
+      <div id="todolist" className={`glass-2`}>
         <div className='header'>
           <div className='red'></div>
-          <div className='yellow'></div>
+          <div onClick={() => props.onViewChange({ "_id": 1, "name": "To Do List" })} className='yellow'></div>
           <div className='green'></div>
           <h2>ToDo List</h2>
         </div>

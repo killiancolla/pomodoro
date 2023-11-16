@@ -19,7 +19,7 @@ const Timer = ({ minutes, seconds }) => {
     );
 };
 
-const Home = () => {
+const Home = (props) => {
 
     const { t, i18n } = useTranslation();
     const [cycles, setCycles] = useState(nbCycle);
@@ -87,12 +87,13 @@ const Home = () => {
 
     return (
         <Draggable
+            defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
             positionOffset={{ x: '-50%', y: '-50%' }}
             handle='.header' >
-            <div className={`glass-1 App${darkMode ? ' dark-mode' : ''}`}>
+            <div className={`glass-1 App`}>
                 <div className='header'>
                     <div className='red'></div>
-                    <div className='yellow'></div>
+                    <div onClick={() => props.onViewChange({ "_id": 0, "name": "Timer" })} className='yellow'></div>
                     <div className='green'></div>
                     <h2>Timer</h2>
                 </div>
