@@ -9,34 +9,14 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBreadSlice } from '@fortawesome/free-solid-svg-icons';
+import allThemes from '../data';
 
 const Themes = (props) => {
 
-    const [state, setState] = useState('France')
-
-    const [view, setView] = useState(1)
-
-    const handleChange = (event) => {
-        const selectedCountry = event.target.value;
-        setState(selectedCountry);
-        props.onCountryChange(selectedCountry);
-    };
-
     const settings = {
         afterChange: (index) => {
-            let selectedCountry = ''
-            switch (index) {
-                case 0:
-                    selectedCountry = 'France'
-                    break;
-                case 1:
-                    selectedCountry = 'Japan'
-                    break;
-                default:
-                    selectedCountry = 'Autre';
-            }
-            setState(selectedCountry)
-            props.onCountryChange(selectedCountry);
+            const themesArray = Object.values(allThemes);
+            props.onThemeChange(themesArray[index]);
         }
     };
 
@@ -45,7 +25,7 @@ const Themes = (props) => {
             defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
             handle='.header'
         >
-            <div id="themes" className={`glass-2`}>
+            <div id="themes" className={`glass-1`}>
                 <div className='header'>
                     <div className='red'></div>
                     <div onClick={() => props.onViewChange({ "_id": 2, "name": "Theme" })} className='yellow'></div>
@@ -55,18 +35,13 @@ const Themes = (props) => {
                 <div className="theme-selector">
                     <div id='carrousel'>
                         <Slider {...settings}>
-                            <div>
-                                <h3>France</h3>
-                            </div>
-                            <div>
-                                <h3>Japan</h3>
-                            </div>
+                            {Object.keys(props.themes).map((key) => (
+                                <div key={key}>
+                                    <h3 style={{ textAlign: "center" }}>{key}</h3>
+                                </div>
+                            ))}
                         </Slider>
                     </div>
-                    {/* <select value={state} onChange={handleChange}>
-                        <option value="France">France</option>
-                        <option value="Japan">Japon</option>
-                    </select> */}
                 </div>
             </div>
         </Draggable>

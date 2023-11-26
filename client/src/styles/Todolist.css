@@ -1,6 +1,8 @@
 #todolist {
   position: absolute;
   padding-top: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .to-do-list input[type='text'] {

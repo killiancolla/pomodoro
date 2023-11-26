@@ -32,11 +32,11 @@ const MusicPlayer = (props) => {
         }
     }
     const theme = useTheme();
-    const duration = musics[props.music].duration;
+    const duration = musics[props.themes.code].duration;
     const [position, setPosition] = React.useState(0);
     const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
     const lightIconColor = theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
-    let audioFile = `/music/${props.music}.mp3`;
+    let audioFile = `${props.themes.music}`;
     const [audioContext, setAudioContext] = useState(null);
     const [audioBuffer, setAudioBuffer] = useState(null);
     const [source, setSource] = useState(null);
@@ -160,15 +160,15 @@ const MusicPlayer = (props) => {
                         <div className='cover-image'>
                             <img
                                 alt="Logo "
-                                src={`/img/${props.music}.jpg`}
+                                src={`${props.themes.image}`}
                             />
                         </div>
                         <Box sx={{ ml: 1.5, minWidth: 0 }}>
                             <Typography noWrap>
-                                <b>{musics[props.music].title}</b>
+                                <b>{musics[props.themes.code].title}</b>
                             </Typography>
                             <Typography noWrap letterSpacing={-0.25}>
-                                {musics[props.music].artist}
+                                {musics[props.themes.code].artist}
                             </Typography>
                         </Box>
                     </Box>

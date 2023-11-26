@@ -35,7 +35,7 @@ const ToDoList = (props) => {
     <Draggable
       defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
       handle='.header'>
-      <div id="todolist" className={`glass-2`}>
+      <div id="todolist" className={`glass-1`}>
         <div className='header'>
           <div className='red'></div>
           <div onClick={() => props.onViewChange({ "_id": 1, "name": "To Do List" })} className='yellow'></div>
