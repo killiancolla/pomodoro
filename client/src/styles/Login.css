@@ -29,6 +29,8 @@
 }
 
 #formConnexion>.container {
+    padding-top: 30px;
+    padding-left: 30px;
     width: 50%;
     height: 50%;
 }

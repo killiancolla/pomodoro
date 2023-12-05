@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 import Draggable from 'react-draggable';
+import { useUser } from '../utils/UserContext';
+import axios from 'axios';
 
 const sessionDuration = 25 * 60;
 const breakDuration = 5 * 60;
@@ -29,10 +31,14 @@ const Home = (props) => {
     const [isRunning, setIsRunning] = useState(false);
     const [isBreak, setIsBreak] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
+    const { user, updateUser, logoutUser } = useUser();
 
     useEffect(() => {
         if (isRunning) {
             const interval = setInterval(() => {
+                if (localStorage.getItem("user") && user !== null) {
+                    updateUser(currentUser => ({ ...currentUser, totalTime: currentUser.totalTime + 1 }));
+                }
                 setTimeLeft((prevTime) => prevTime - 1);
                 setTotalWorkTime((prevTime) => prevTime + 1);
             }, 1000);
@@ -40,6 +46,38 @@ const Home = (props) => {
             return () => clearInterval(interval);
         }
     }, [isRunning]);
+
+    useEffect(() => {
+        if (totalWorkTime % 60 === 0 && totalWorkTime !== 0) {
+            try {
+                axios.post(`http://localhost:5000/api/users/journal/${user.id}`)
+                    .then(() => {
+                        const date = new Date().toISOString().split('T')[0];
+                        updateUser(currentUser => {
+                            const updatedUser = { ...currentUser };
+
+                            const statIndex = updatedUser.studyStats.findIndex(
+                                stat => stat.date.split('T')[0] === date
+                            );
+
+                            if (statIndex !== -1) {
+                                updatedUser.studyStats[statIndex].timeStudied += 60;
+                            } else {
+                                updatedUser.studyStats.push({ date: date, timeStudied: 60 });
+                            }
+
+                            return updatedUser;
+                        });
+                        console.log("Ajout de 1 minute réussie");
+                    })
+                    .catch(error => {
+                        console.error("Erreur lors de la mise à jour des données utilisateur", error);
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [totalWorkTime]);
 
     useEffect(() => {
         if (timeLeft === 0) {
@@ -56,7 +94,25 @@ const Home = (props) => {
         }
     }, [timeLeft, cycles, breakTime, isBreak]);
 
+    useEffect(() => {
+        if (user) {
+            changeLanguage(user.favLanguage);
+        }
+    }, [user])
+
     const changeLanguage = (lng) => {
+        if (user && lng !== user.favLanguage) {
+            let data = {
+                favLanguage: lng
+            };
+            axios.patch(`http://localhost:5000/api/users/${user.id}`, data)
+                .then(response => {
+                    updateUser({ ...user, favLanguage: lng });
+                })
+                .catch(error => {
+                    console.error("Erreur lors de la mise à jour des données utilisateur", error);
+                });
+        }
         i18n.changeLanguage(lng);
     };
 

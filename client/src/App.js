@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Home from './pages/Home';
 import MusicPlayer from './pages/MusicPlayer';
 import ToDoList from './pages/Todolist';
@@ -8,15 +8,39 @@ import Themes from './pages/Themes';
 import Footer from './pages/Footer';
 import Login from './pages/Login';
 import allThemes from './data';
+import { useUser } from './utils/UserContext';
 
 const App = () => {
 
-  const [theme, setTheme] = useState(allThemes["France"])
+  const { user, updateUser, logoutUser } = useUser();
+  const [backgroundImage, setBackgroundImage] = useState('/img/Default.png');
+  const [theme, setTheme] = useState(allThemes["Default"])
   const [footer, setFooter] = useState([
     { "_id": 3, "name": "Music Player" }, { "_id": 1, "name": "ToDoList" }, { "_id": 2, "name": "Theme" }
   ])
+  const [themeInit, setThemeInit] = useState(false);
+
+  const appStyle = {
+    margin: 0,
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    height: '100vh'
+  };
+
+  useEffect(() => {
+    if (user && user.favTheme && allThemes[user.favTheme] && !themeInit) {
+      setTheme(allThemes[user.favTheme]);
+      setBackgroundImage(allThemes[user.favTheme].image)
+      setThemeInit(true)
+    }
+    // else if (!themeInit) {
+    //   setTheme(allThemes["Default"])
+    //   setThemeInit(true)
+    // }
+  }, [user])
 
   const handleThemeChange = (selectedCountry) => {
+    setBackgroundImage(selectedCountry.image)
     setTheme(selectedCountry)
   };
 
@@ -36,11 +60,8 @@ const App = () => {
     ]);
   };
 
-
-
-
   return (
-    <>
+    <div style={appStyle}>
       <Home
         show={footer.filter((val) => val._id === 0).length === 0}
         onViewChange={handleFooterChange}
@@ -56,6 +77,7 @@ const App = () => {
       />
       <Themes
         themes={allThemes}
+        theme={theme}
         show={footer.filter((val) => val._id === 2).length === 0}
         onViewChange={handleFooterChange}
         onThemeChange={handleThemeChange}
@@ -68,7 +90,7 @@ const App = () => {
         footer={footer}
         footerDelete={handleFooterRemove}
       />
-    </>
+    </div>
   )
 };
 

@@ -18,21 +18,9 @@ import { SettingsRounded } from '@mui/icons-material';
 
 const MusicPlayer = (props) => {
 
-    const musics = {
-        "France":
-        {
-            "title": "Titre de la musique française",
-            "artist": "cjsdkj",
-            "duration": 105
-        },
-        "Japan": {
-            "title": "Titre de la musique japonaise",
-            "artist": "Imase",
-            "duration": 153
-        }
-    }
+    const musics = props.themes.musicInfo;
     const theme = useTheme();
-    const duration = musics[props.themes.code].duration;
+    const duration = musics.duration;
     const [position, setPosition] = React.useState(0);
     const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
     const lightIconColor = theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
@@ -165,10 +153,10 @@ const MusicPlayer = (props) => {
                         </div>
                         <Box sx={{ ml: 1.5, minWidth: 0 }}>
                             <Typography noWrap>
-                                <b>{musics[props.themes.code].title}</b>
+                                <b>{musics.title}</b>
                             </Typography>
                             <Typography noWrap letterSpacing={-0.25}>
-                                {musics[props.themes.code].artist}
+                                {musics.artist}
                             </Typography>
                         </Box>
                     </Box>

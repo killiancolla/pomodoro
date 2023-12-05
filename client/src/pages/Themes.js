@@ -2,7 +2,7 @@
 import { exists, t, use } from 'i18next';
 import '../styles/Themes.css';
 import Draggable from 'react-draggable';
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import React from 'react';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -10,15 +10,48 @@ import Slider from "react-slick";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBreadSlice } from '@fortawesome/free-solid-svg-icons';
 import allThemes from '../data';
+import { useUser } from '../utils/UserContext';
+import axios from 'axios';
 
 const Themes = (props) => {
+
+    const { user, updateUser, logoutUser } = useUser();
+    const sliderRef = useRef();
+
+    useEffect(() => {
+        const themeIndex = Object.keys(props.themes).indexOf(props.theme.code);
+        if (sliderRef.current) {
+            sliderRef.current.slickGoTo(themeIndex);
+        }
+    }, [props.theme, props.themes]);
 
     const settings = {
         afterChange: (index) => {
             const themesArray = Object.values(allThemes);
             props.onThemeChange(themesArray[index]);
-        }
+        },
+        initialSlide: 0
     };
+
+    useEffect(() => {
+        settings.initialSlide = Object.keys(props.themes).indexOf(props.theme.code)
+    }, [props.theme])
+
+    const handleFavClick = () => {
+        const userId = localStorage.getItem('user');
+        if (userId) {
+            let data = {
+                favTheme: props.theme.code
+            };
+            axios.patch(`http://localhost:5000/api/users/${userId}`, data)
+                .then(response => {
+                    updateUser({ ...user, favTheme: props.theme.code });
+                })
+                .catch(error => {
+                    console.error("Erreur lors de la mise à jour des données utilisateur", error);
+                });
+        }
+    }
 
     return (
         <Draggable
@@ -34,7 +67,7 @@ const Themes = (props) => {
                 </div>
                 <div className="theme-selector">
                     <div id='carrousel'>
-                        <Slider {...settings}>
+                        <Slider ref={sliderRef} {...settings}>
                             {Object.keys(props.themes).map((key) => (
                                 <div key={key}>
                                     <h3 style={{ textAlign: "center" }}>{key}</h3>
@@ -43,6 +76,11 @@ const Themes = (props) => {
                         </Slider>
                     </div>
                 </div>
+                {
+                    user ?
+                        <button onClick={handleFavClick}>Définir comme favori</button>
+                        : ''
+                }
             </div>
         </Draggable>
     );

@@ -77,14 +77,34 @@ router.post('/login', (req, res, next) => {
                 res.send(err);
             }
 
-            res.status(201).json({ id: user.id, nom: user.nom, prenom: user.prenom, email: user.email });
+            res.status(201).json({
+                id: user.id,
+                nom: user.nom,
+                prenom: user.prenom,
+                email: user.email,
+                favTheme: user.favTheme,
+                favLanguage: user.favLanguage,
+                nbCycle: user.nbCycle,
+                totalTime: user.totalTime,
+                studyStats: user.studyStats
+            });
         });
     })(req, res, next);
 });
 
 router.get('/:id', async (req, res) => {
     const user = await User.findById(req.params.id);
-    res.json(user);
+    res.json({
+        id: user.id,
+        nom: user.nom,
+        prenom: user.prenom,
+        email: user.email,
+        favTheme: user.favTheme,
+        favLanguage: user.favLanguage,
+        nbCycle: user.nbCycle,
+        totalTime: user.totalTime,
+        studyStats: user.studyStats
+    });
 });
 
 router.post('/', async (req, res) => {
@@ -96,6 +116,33 @@ router.post('/', async (req, res) => {
 router.patch('/:id', async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updatedUser);
+});
+
+router.post('/journal/:id', async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(1, 0, 0, 0);
+        const inc = 60;
+
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).send('Utilisateur non trouvé');
+        }
+
+        const studyStatIndex = user.studyStats.findIndex(stat => stat.date.getTime() === today.getTime());
+
+        if (studyStatIndex === -1) {
+            user.studyStats.push({ date: today, timeStudied: inc });
+        } else {
+            user.studyStats[studyStatIndex].timeStudied += inc;
+        }
+
+        await user.save();
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erreur serveur');
+    }
 });
 
 router.delete('/:id', async (req, res) => {
