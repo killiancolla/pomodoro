@@ -25,6 +25,7 @@
     "react-i18next": "^13.3.1",
     "react-scripts": "5.0.1",
     "react-slick": "^0.29.0",
+    "react-toastify": "^10.0.5",
     "remixicon": "^3.5.0",
     "resolve-url-loader": "^5.0.0",
     "slick-carousel": "^1.8.1",
