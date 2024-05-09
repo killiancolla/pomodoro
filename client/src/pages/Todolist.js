@@ -3,6 +3,10 @@ import { exists, t } from 'i18next';
 import React, { useState } from 'react';
 import '../styles/Todolist.css';
 import Draggable from 'react-draggable';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
+
 
 const ToDoList = (props) => {
   const [items, setItems] = useState([]);
@@ -54,14 +58,17 @@ const ToDoList = (props) => {
         <ul>
           {items.map((item, index) => (
             <li key={index} className={item.checked ? 'checked' : ''}>
-              <input
-                type="checkbox"
-                className='glass-1'
-                checked={item.checked}
-                onChange={() => handleToggleItem(index)}
-              />
-              {item.text}
-              <button className='glass-1' onClick={() => handleRemoveItem(index)}>{t('delete')}</button>
+              <label className="checkbox-container">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  checked={item.checked}
+                  onChange={() => handleToggleItem(index)}
+                />
+                <span className="checkbox-custom"></span>
+              </label>
+              <span className="item-text">{item.text}</span>
+              <FontAwesomeIcon onClick={() => handleRemoveItem(index)} icon={faTrash} />
             </li>
           ))}
         </ul>

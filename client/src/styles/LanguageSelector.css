@@ -1,5 +1,6 @@
 .language-selector {
     position: relative;
+    z-index: 1000;
 }
 
 .language-button {
