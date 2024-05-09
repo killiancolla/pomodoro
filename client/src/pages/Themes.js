@@ -1,21 +1,19 @@
 // src/ToDoList.js
-import { exists, t, use } from 'i18next';
 import '../styles/Themes.css';
 import Draggable from 'react-draggable';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import React from 'react';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBreadSlice } from '@fortawesome/free-solid-svg-icons';
 import allThemes from '../data';
 import { useUser } from '../utils/UserContext';
 import axios from 'axios';
 
 const Themes = (props) => {
 
-    const { user, updateUser, logoutUser } = useUser();
+    const draggableRef = useRef(null);
+    const { user, updateUser } = useUser();
     const sliderRef = useRef();
 
     useEffect(() => {
@@ -25,17 +23,17 @@ const Themes = (props) => {
         }
     }, [props.theme, props.themes]);
 
-    const settings = {
+    const settings = useMemo(() => ({
         afterChange: (index) => {
             const themesArray = Object.values(allThemes);
             props.onThemeChange(themesArray[index]);
         },
         initialSlide: 0
-    };
+    }), [props]);
 
     useEffect(() => {
         settings.initialSlide = Object.keys(props.themes).indexOf(props.theme.code)
-    }, [props.theme])
+    }, [props.themes, props.theme, settings])
 
     const handleFavClick = () => {
         const userId = localStorage.getItem('user');
@@ -55,10 +53,11 @@ const Themes = (props) => {
 
     return (
         <Draggable
-            defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
+            nodeRef={draggableRef}
+            defaultClassName={`fullWindow ${props.show === true ? 'visible' : 'hidden'}`}
             handle='.header'
         >
-            <div id="themes" className={`glass-1`}>
+            <div id="themes" ref={draggableRef} className={`glass-1`}>
                 <div className='header'>
                     <div className='red'></div>
                     <div onClick={() => props.onViewChange({ "_id": 2, "name": "Theme" })} className='yellow'></div>

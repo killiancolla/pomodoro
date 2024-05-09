@@ -1,6 +1,6 @@
 // src/ToDoList.js
-import { exists, t } from 'i18next';
-import React, { useState } from 'react';
+import { t } from 'i18next';
+import React, { useState, useRef } from 'react';
 import '../styles/Todolist.css';
 import Draggable from 'react-draggable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,6 +9,8 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 
 const ToDoList = (props) => {
+
+  const draggableRef = useRef(null);
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState('');
 
@@ -37,9 +39,10 @@ const ToDoList = (props) => {
 
   return (
     <Draggable
-      defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
+      nodeRef={draggableRef}
+      defaultClassName={`fullWindow ${props.show === true ? 'visible' : 'hidden'}`}
       handle='.header'>
-      <div id="todolist" className={`glass-1`}>
+      <div id="todolist" ref={draggableRef} className={`glass-1`}>
         <div className='header'>
           <div className='red'></div>
           <div onClick={() => props.onViewChange({ "_id": 1, "name": "To Do List" })} className='yellow'></div>

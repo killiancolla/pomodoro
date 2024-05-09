@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import '../styles/App.css';
 import LanguageSelector from '../pages/LanguageSelector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,15 +23,18 @@ const Timer = ({ minutes, seconds }) => {
 
 const Home = (props) => {
 
+    const draggableRef = useRef(null);
+    const audio = useMemo(() => new Audio(props.themes.pauseSound), [props.themes.pauseSound]);
+
     const { t, i18n } = useTranslation();
     const [cycles, setCycles] = useState(nbCycle);
     const [timeLeft, setTimeLeft] = useState(sessionDuration);
-    const [breakTime, setBreakTime] = useState(breakDuration);
+    const [breakTime] = useState(breakDuration);
     const [totalWorkTime, setTotalWorkTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [isBreak, setIsBreak] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
-    const { user, updateUser, logoutUser } = useUser();
+    const { user, updateUser } = useUser();
 
     useEffect(() => {
         if (isRunning) {
@@ -45,7 +48,7 @@ const Home = (props) => {
 
             return () => clearInterval(interval);
         }
-    }, [isRunning]);
+    }, [isRunning, updateUser, user]);
 
     useEffect(() => {
         if (totalWorkTime % 60 === 0 && totalWorkTime !== 0) {
@@ -77,10 +80,15 @@ const Home = (props) => {
                 console.log(error);
             }
         }
-    }, [totalWorkTime]);
+    }, [totalWorkTime, updateUser, user?.id]);
+
+    const playSound = useCallback(() => {
+        audio.play();
+    }, [audio])
 
     useEffect(() => {
         if (timeLeft === 0) {
+            playSound();
             if (cycles > 1 && !isBreak) {
                 setIsBreak(true);
                 setTimeLeft(breakTime);
@@ -92,15 +100,9 @@ const Home = (props) => {
                 setIsRunning(false);
             }
         }
-    }, [timeLeft, cycles, breakTime, isBreak]);
+    }, [timeLeft, cycles, breakTime, isBreak, playSound]);
 
-    useEffect(() => {
-        if (user) {
-            changeLanguage(user.favLanguage);
-        }
-    }, [user])
-
-    const changeLanguage = (lng) => {
+    const changeLanguage = useCallback((lng) => {
         if (user && lng !== user.favLanguage) {
             let data = {
                 favLanguage: lng
@@ -114,7 +116,13 @@ const Home = (props) => {
                 });
         }
         i18n.changeLanguage(lng);
-    };
+    }, [i18n, updateUser, user]);
+
+    useEffect(() => {
+        if (user) {
+            changeLanguage(user.favLanguage);
+        }
+    }, [user, changeLanguage])
 
     const handleCyclesChange = (event) => {
         nbCycle = parseInt(event.target.value);
@@ -143,10 +151,11 @@ const Home = (props) => {
 
     return (
         <Draggable
-            defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
+            nodeRef={draggableRef}
+            defaultClassName={`fullWindow ${props.show === true ? 'visible' : 'hidden'}`}
             positionOffset={{ x: '-50%', y: '-50%' }}
             handle='.header' >
-            <div className={`glass-1 App`}>
+            <div ref={draggableRef} className={`glass-1 App`}>
                 <div className='header'>
                     <div className='red'></div>
                     <div onClick={() => props.onViewChange({ "_id": 0, "name": "Timer" })} className='yellow'></div>
@@ -178,13 +187,13 @@ const Home = (props) => {
                         seconds={timeLeft % 60}
                     />
                 </h2>
-                <p>
+                <div>
                     {t('workSince')}
                     <Timer
                         minutes={Math.floor(totalWorkTime / 60)}
                         seconds={totalWorkTime % 60}
                     />
-                </p>
+                </div>
                 <br />
                 <button className='glass-1' onClick={handleStart} disabled={isRunning}>
                     {t('start')}

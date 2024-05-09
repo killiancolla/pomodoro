@@ -15,8 +15,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
 
   const { user, updateUser, logoutUser } = useUser();
-  const [backgroundImage, setBackgroundImage] = useState('/img/Default.png');
-  const [theme, setTheme] = useState(allThemes["Default"])
+  const [backgroundImage, setBackgroundImage] = useState('/img/coffee.jpeg');
+  const [theme, setTheme] = useState(allThemes["Coffee"])
   const [footer, setFooter] = useState([
     { "_id": 3, "name": "Music Player" }, { "_id": 1, "name": "ToDoList" }, { "_id": 2, "name": "Theme" }
   ])
@@ -24,7 +24,7 @@ const App = () => {
 
   const appStyle = {
     margin: 0,
-    backgroundImage: `url(${backgroundImage})`,
+    backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${backgroundImage})`,
     backgroundSize: 'cover',
     height: '100vh'
   };
@@ -68,6 +68,7 @@ const App = () => {
       <Home
         show={footer.filter((val) => val._id === 0).length === 0}
         onViewChange={handleFooterChange}
+        themes={theme}
       />
       <MusicPlayer
         show={footer.filter((val) => val._id === 3).length === 0}

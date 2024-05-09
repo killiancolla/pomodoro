@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import '../styles/MusicPlayer.css';
 import Draggable from 'react-draggable';
-import { duration, styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
@@ -13,9 +13,10 @@ import FastForwardRounded from '@mui/icons-material/FastForwardRounded';
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
 import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
-import { SettingsRounded } from '@mui/icons-material';
 
 const MusicPlayer = (props) => {
+
+    const draggableRef = useRef(null);
     const musics = props.themes;
     const theme = useTheme();
     const [position, setPosition] = useState(0);
@@ -56,16 +57,18 @@ const MusicPlayer = (props) => {
                     }
                 });
         }
-    }, [audioContext, audioBuffer, currentTrackIndex, musics]);
+    }, [audioContext, audioBuffer, currentTrackIndex, musics, isPlaying, position, volume]);
 
-    useEffect(() => {
-        if (isPlaying) {
-            const intervalId = setInterval(updatePosition, 100);
-            return () => clearInterval(intervalId);
-        }
-    }, [isPlaying, audioContext, source]);
+    const playNextTrack = useCallback(() => {
+        setAudioBuffer(null);
+        setAudioContext(null);
+        setPosition(0);
+        setTotalPausedTime(0);
+        setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % musics.musicInfo.length)
+        setIsPlaying(true)
+    }, [musics.musicInfo.length]);
 
-    const updatePosition = () => {
+    const updatePosition = useCallback(() => {
         if (!isPlaying || !source || !audioContext) return;
         if (audioContext && source) {
             const currentTime = audioContext.currentTime - totalPausedTime;
@@ -74,17 +77,14 @@ const MusicPlayer = (props) => {
                 playNextTrack();
             }
         }
-    };
+    }, [totalPausedTime, audioBuffer?.duration, audioContext, isPlaying, playNextTrack, source]);
 
-    const playNextTrack = () => {
-        stop();
-        setAudioBuffer(null);
-        setAudioContext(null);
-        setPosition(0);
-        setTotalPausedTime(0);
-        setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % musics.musicInfo.length)
-        setIsPlaying(true)
-    };
+    useEffect(() => {
+        if (isPlaying) {
+            const intervalId = setInterval(updatePosition, 100);
+            return () => clearInterval(intervalId);
+        }
+    }, [isPlaying, audioContext, source, updatePosition]);
 
     const playPreviousTrack = () => {
         stop();
@@ -124,20 +124,6 @@ const MusicPlayer = (props) => {
         }
     };
 
-    const replay = () => {
-        stop();
-        // const sourceNode = audioContext.createBufferSource();
-        // const gainNode = audioContext.createGain();
-        // sourceNode.buffer = audioBuffer;
-        // sourceNode.connect(gainNode);
-        // gainNode.connect(audioContext.destination);
-        // gainNode.gain.value = volume / 100;
-        // sourceNode.start(0, position);
-        // setSource(sourceNode);
-        // setIsPlaying(true);
-        // setTotalPausedTime(totalPausedTime + (audioContext.currentTime - pausedTime))
-    };
-
     const handleVolumeChange = (event, newValue) => {
         setVolume(newValue);
         if (source && audioContext) {
@@ -157,8 +143,8 @@ const MusicPlayer = (props) => {
     }
 
     return (
-        <Draggable defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`} handle='.header'>
-            <Box sx={{ width: 'fit-content', overflow: 'hidden' }}>
+        <Draggable nodeRef={draggableRef} defaultClassName={`fullWindow ${props.show === true ? 'visible' : 'hidden'}`} handle='.header'>
+            <Box ref={draggableRef} sx={{ width: 'fit-content', overflow: 'hidden' }}>
                 <div className={`widget`}>
                     <div className='header'>
                         <div className='red'></div>
@@ -168,7 +154,7 @@ const MusicPlayer = (props) => {
                     </div>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <div className='cover-image'>
-                            <img alt="Logo " src={`${props.themes.image}`} />
+                            <img alt="Logo " src={`${musics.musicInfo[currentTrackIndex].image}`} />
                         </div>
                         <Box sx={{ ml: 1.5, minWidth: 0 }}>
                             <Typography noWrap>

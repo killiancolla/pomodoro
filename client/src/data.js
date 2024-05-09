@@ -1,68 +1,23 @@
 const allThemes = {
-    "Default": {
-        "code": "Default",
-        "image": "/img/Default.png",
+    "Coffee": {
+        "code": "Coffee",
+        "image": "/img/coffee.jpeg",
+        "pauseSound": "/music/pause/coffee.mp3",
         "musicInfo": [
             {
-                "title": "Japan",
-                "artist": "cjsdkj",
-                "link": "/music/Japan.mp3"
+                "title": "Once In Paris",
+                "artist": "Pumpupthemind",
+                "link": "/music/pause/coffee.mp3",
+                "image": "/img/musics/once-in-paris.png"
             },
             {
-                "title": "France",
-                "artist": "Autre",
-                "link": "/music/France.mp3"
+                "title": "Jazzy Abstract Beat",
+                "artist": "Coma-Media",
+                "link": "/music/pause/coffee.mp3",
+                "image": "/img/musics/jazz-abstract-beat.webp"
             }
         ]
-    },
-    "France": {
-        "code": "France",
-        "image": "/img/France.jpg",
-        "musicInfo": [
-            {
-                "title": "Musique 1",
-                "artist": "cjsdkj",
-                "link": "/music/Japan.mp3"
-            },
-            {
-                "title": "Musique 2",
-                "artist": "Autre",
-                "link": "/music/France.mp3"
-            }
-        ]
-    },
-    "Japan": {
-        "code": "Japan",
-        "image": "/img/Japan.jpg",
-        "musicInfo": [
-            {
-                "title": "Musique 1",
-                "artist": "cjsdkj",
-                "link": "/music/Japan.mp3"
-            },
-            {
-                "title": "Musique 2",
-                "artist": "Autre",
-                "link": "/music/France.mp3"
-            }
-        ]
-    },
-    "Nature": {
-        "code": "Nature",
-        "image": "/img/Nature.jpg",
-        "musicInfo": [
-            {
-                "title": "Musique 1",
-                "artist": "cjsdkj",
-                "link": "/music/Japan.mp3"
-            },
-            {
-                "title": "Musique 2",
-                "artist": "Autre",
-                "link": "/music/France.mp3"
-            }
-        ]
-    },
+    }
 };
 
 export default allThemes;
