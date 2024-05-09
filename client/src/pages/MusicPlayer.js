@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/MusicPlayer.css'
+import '../styles/MusicPlayer.css';
 import Draggable from 'react-draggable';
-// import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { duration, styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
@@ -17,46 +16,47 @@ import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
 import { SettingsRounded } from '@mui/icons-material';
 
 const MusicPlayer = (props) => {
-
-    const musics = props.themes.musicInfo;
+    const musics = props.themes;
     const theme = useTheme();
-    const duration = musics.duration;
-    const [position, setPosition] = React.useState(0);
+    const [position, setPosition] = useState(0);
     const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
     const lightIconColor = theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
-    let audioFile = `${props.themes.music}`;
     const [audioContext, setAudioContext] = useState(null);
     const [audioBuffer, setAudioBuffer] = useState(null);
     const [source, setSource] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [startTime, setStartTime] = useState(null);
+    const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [pausedTime, setPausedTime] = useState(0);
+    const [totalPausedTime, setTotalPausedTime] = useState(0);
+    const [volume, setVolume] = useState(30);
 
     useEffect(() => {
         if (!audioContext) {
             const context = new (window.AudioContext || window.webkitAudioContext)();
             setAudioContext(context);
         }
-
-        if (audioContext && !audioBuffer) {
-            fetch(audioFile)
-                .then((response) => response.arrayBuffer())
-                .then((data) => audioContext.decodeAudioData(data))
-                .then((decodedData) => setAudioBuffer(decodedData));
-        }
-    }, [audioContext, audioBuffer, audioFile]);
+    }, [audioContext]);
 
     useEffect(() => {
-        if (source) {
-            source.stop();
-        }
-        if (audioContext && audioFile) {
-            fetch(audioFile)
+        if (audioContext && !audioBuffer) {
+            fetch(musics.musicInfo[currentTrackIndex].link)
                 .then((response) => response.arrayBuffer())
                 .then((data) => audioContext.decodeAudioData(data))
-                .then((decodedData) => setAudioBuffer(decodedData));
+                .then((decodedData) => {
+                    setAudioBuffer(decodedData)
+                    if (isPlaying) {
+                        const sourceNode = audioContext.createBufferSource();
+                        const gainNode = audioContext.createGain();
+                        sourceNode.buffer = decodedData;
+                        sourceNode.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        gainNode.gain.value = volume / 100;
+                        sourceNode.start(0, position);
+                        setSource(sourceNode);
+                    }
+                });
         }
-    }, [audioContext, audioFile]);
+    }, [audioContext, audioBuffer, currentTrackIndex, musics]);
 
     useEffect(() => {
         if (isPlaying) {
@@ -65,60 +65,56 @@ const MusicPlayer = (props) => {
         }
     }, [isPlaying, audioContext, source]);
 
-    function formatDuration(value) {
-        const minute = Math.floor(value / 60);
-        const secondLeft = value - minute * 60;
-        return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
-    }
-
     const updatePosition = () => {
         if (!isPlaying || !source || !audioContext) return;
         if (audioContext && source) {
-            const currentTime = pausedTime + audioContext.currentTime - startTime;
+            const currentTime = audioContext.currentTime - totalPausedTime;
             setPosition(Math.floor(currentTime));
+            if (currentTime >= audioBuffer?.duration) {
+                playNextTrack();
+            }
         }
     };
 
-    const handleSliderCommitted = (event, newValue) => {
-        if (source) {
-            setPosition(newValue);
-            source.stop();
-            setSource(null)
-            playFromPosition(newValue);
-        }
+    const playNextTrack = () => {
+        stop();
+        setAudioBuffer(null);
+        setAudioContext(null);
+        setPosition(0);
+        setTotalPausedTime(0);
+        setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % musics.musicInfo.length)
+        setIsPlaying(true)
     };
 
-    const playFromPosition = (position) => {
-        if (audioContext && audioBuffer) {
-            const sourceNode = audioContext.createBufferSource();
-            sourceNode.buffer = audioBuffer;
-            sourceNode.connect(audioContext.destination);
-            sourceNode.start(0, position);
-            setSource(sourceNode);
-            setIsPlaying(true);
-            setStartTime(audioContext.currentTime - position);
-            sourceNode.onended = () => {
-                setIsPlaying(false);
-            };
+    const playPreviousTrack = () => {
+        stop();
+        if (position <= 8) {
+            setCurrentTrackIndex((prevIndex) => {
+                const newIndex = (prevIndex - 1) % musics.musicInfo.length;
+                return newIndex < 0 ? musics.musicInfo.length - 1 : newIndex;
+            });
         }
+        setAudioBuffer(null);
+        setAudioContext(null);
+        setPosition(0);
+        setTotalPausedTime(0);
+        setIsPlaying(true)
     };
 
     const play = () => {
         if (audioContext && audioBuffer && !isPlaying) {
             const sourceNode = audioContext.createBufferSource();
+            const gainNode = audioContext.createGain();
             sourceNode.buffer = audioBuffer;
-            sourceNode.connect(audioContext.destination);
+            sourceNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            gainNode.gain.value = volume / 100;
             sourceNode.start(0, position);
             setSource(sourceNode);
             setIsPlaying(true);
-            setStartTime(audioContext.currentTime);
-
-            sourceNode.onended = () => {
-                setIsPlaying(false);
-            };
+            setTotalPausedTime(totalPausedTime + (audioContext.currentTime - pausedTime));
         }
     };
-
 
     const stop = () => {
         if (source) {
@@ -128,15 +124,41 @@ const MusicPlayer = (props) => {
         }
     };
 
+    const replay = () => {
+        stop();
+        // const sourceNode = audioContext.createBufferSource();
+        // const gainNode = audioContext.createGain();
+        // sourceNode.buffer = audioBuffer;
+        // sourceNode.connect(gainNode);
+        // gainNode.connect(audioContext.destination);
+        // gainNode.gain.value = volume / 100;
+        // sourceNode.start(0, position);
+        // setSource(sourceNode);
+        // setIsPlaying(true);
+        // setTotalPausedTime(totalPausedTime + (audioContext.currentTime - pausedTime))
+    };
+
+    const handleVolumeChange = (event, newValue) => {
+        setVolume(newValue);
+        if (source && audioContext) {
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = newValue / 100;
+            source.disconnect();
+            source.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+        }
+    };
+
+    function formatDuration(value) {
+        value = Math.round(value)
+        const minute = Math.floor(value / 60);
+        const secondLeft = value - minute * 60;
+        return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
+    }
+
     return (
-        <Draggable
-            defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`}
-            handle='.header'
-        >
-            <Box sx={{
-                width: 'fit-content',
-                overflow: 'hidden',
-            }}>
+        <Draggable defaultClassName={`fullWindow ${props.show == 1 ? 'visible' : 'hidden'}`} handle='.header'>
+            <Box sx={{ width: 'fit-content', overflow: 'hidden' }}>
                 <div className={`widget`}>
                     <div className='header'>
                         <div className='red'></div>
@@ -146,17 +168,14 @@ const MusicPlayer = (props) => {
                     </div>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <div className='cover-image'>
-                            <img
-                                alt="Logo "
-                                src={`${props.themes.image}`}
-                            />
+                            <img alt="Logo " src={`${props.themes.image}`} />
                         </div>
                         <Box sx={{ ml: 1.5, minWidth: 0 }}>
                             <Typography noWrap>
-                                <b>{musics.title}</b>
+                                <b>{musics.musicInfo[currentTrackIndex].title}</b>
                             </Typography>
                             <Typography noWrap letterSpacing={-0.25}>
-                                {musics.artist}
+                                {musics.musicInfo[currentTrackIndex].artist}
                             </Typography>
                         </Box>
                     </Box>
@@ -166,9 +185,7 @@ const MusicPlayer = (props) => {
                         value={position}
                         min={0}
                         step={1}
-                        max={duration}
-                        // onChange={handleSliderChange}
-                        onChangeCommitted={handleSliderCommitted}
+                        max={audioBuffer?.duration ?? 0}
                         sx={{
                             color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
                             height: 4,
@@ -180,10 +197,7 @@ const MusicPlayer = (props) => {
                                     boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
                                 },
                                 '&:hover, &.Mui-focusVisible': {
-                                    boxShadow: `0px 0px 0px 8px ${theme.palette.mode === 'dark'
-                                        ? 'rgb(255 255 255 / 16%)'
-                                        : 'rgb(0 0 0 / 16%)'
-                                        }`,
+                                    boxShadow: `0px 0px 0px 8px ${theme.palette.mode === 'dark' ? 'rgb(255 255 255 / 16%)' : 'rgb(0 0 0 / 16%)'}`,
                                 },
                                 '&.Mui-active': {
                                     width: 20,
@@ -195,60 +209,40 @@ const MusicPlayer = (props) => {
                             },
                         }}
                     />
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            mt: -2,
-                        }}
-                    >
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: -2 }}>
                         <Typography style={{ fontSize: '0.75rem', opacity: 0.38, fontWeight: 500, letterSpacing: '0.2px' }}>
                             {formatDuration(position)}
                         </Typography>
-                        <Typography style={{ fontSize: '0.75rem', opacity: 0.38, fontWeight: 500, letterSpacing: '0.2px' }}>
-                            -{formatDuration(duration - position)}
-                        </Typography>
+                        {audioBuffer && (
+                            <Typography style={{ fontSize: '0.75rem', opacity: 0.38, fontWeight: 500, letterSpacing: '0.2px' }}>
+                                -{formatDuration(audioBuffer.duration - position)}
+                            </Typography>
+                        )}
                     </Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            mt: -1,
-                        }}
-                    >
-                        <IconButton className='icon-button' disabled aria-label="previous song">
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: -1 }}>
+                        <IconButton onClick={playPreviousTrack} className='icon-button' aria-label="previous song">
                             <FastRewindRounded fontSize="large" htmlColor={mainIconColor} />
                         </IconButton>
-                        <IconButton
-                            className='icon-button'
-                            aria-label={isPlaying ? 'play' : 'pause'}
-                            onClick={!isPlaying ? play : stop}
-                        >
-                            {!isPlaying ? (
-                                <PlayArrowRounded
-                                    sx={{ fontSize: '3rem' }}
-                                    htmlColor={mainIconColor}
-                                />
-                            ) : (
+                        <IconButton className='icon-button' aria-label={isPlaying ? 'pause' : 'play'} onClick={isPlaying ? stop : play}>
+                            {isPlaying ? (
                                 <PauseRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
+                            ) : (
+                                <PlayArrowRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
                             )}
                         </IconButton>
-                        <IconButton className='icon-button' disabled aria-label="next song">
+                        <IconButton onClick={playNextTrack} className='icon-button' aria-label="next song">
                             <FastForwardRounded fontSize="large" htmlColor={mainIconColor} />
                         </IconButton>
                     </Box>
                     <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
                         <VolumeDownRounded htmlColor={lightIconColor} />
                         <Slider
+                            onChange={handleVolumeChange}
                             aria-label="Volume"
                             defaultValue={30}
                             sx={{
                                 color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
-                                '& .MuiSlider-track': {
-                                    border: 'none',
-                                },
+                                '& .MuiSlider-track': { border: 'none' },
                                 '& .MuiSlider-thumb': {
                                     width: 24,
                                     height: 24,
@@ -267,7 +261,7 @@ const MusicPlayer = (props) => {
                 </div>
             </Box>
         </Draggable>
-    )
+    );
 };
 
 export default MusicPlayer;
