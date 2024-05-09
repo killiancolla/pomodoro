@@ -9,6 +9,8 @@ import Footer from './pages/Footer';
 import Login from './pages/Login';
 import allThemes from './data';
 import { useUser } from './utils/UserContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
 
@@ -62,6 +64,7 @@ const App = () => {
 
   return (
     <div style={appStyle}>
+      <ToastContainer />
       <Home
         show={footer.filter((val) => val._id === 0).length === 0}
         onViewChange={handleFooterChange}

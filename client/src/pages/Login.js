@@ -7,9 +7,12 @@ import { useUser } from '../utils/UserContext';
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
 import MyChart from '../utils/MyChart';
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 const Login = (props) => {
 
+    const { t, i18n } = useTranslation();
     const { user, updateUser, logoutUser } = useUser();
 
     const [view, setView] = useState(0);
@@ -98,9 +101,6 @@ const Login = (props) => {
         }
     };
 
-
-
-
     const handleLoginSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -117,10 +117,11 @@ const Login = (props) => {
             updateUser(response.data);
             setView(0);
             props.footerDelete({ "_id": 0, "name": "Timer" });
+            toast.success(t('successLogin'))
         } catch (error) {
             console.log(error);
+            toast.error(t('errorLogin'));
         }
-
     }
 
     const handleRegisterSubmit = async (e) => {
@@ -188,6 +189,7 @@ const Login = (props) => {
                                 <input
                                     type='text'
                                     placeholder="Nom d'utilisateur"
+                                    className='glass-1'
                                     value={connexionForm.username}
                                     onChange={(e) => {
                                         setConnexionForm(prevState => {
@@ -202,6 +204,7 @@ const Login = (props) => {
                                 <input
                                     type='password'
                                     placeholder='Mot de passe'
+                                    className='glass-1'
                                     value={connexionForm.password}
                                     onChange={(e) => {
                                         setConnexionForm(prevState => {
@@ -215,6 +218,8 @@ const Login = (props) => {
                                 />
                                 <input
                                     type='submit'
+                                    className='glass-1'
+                                    value='Connexion'
                                 />
                                 <p onClick={(e) => setRegister(1)}>Inscription</p>
                             </form>

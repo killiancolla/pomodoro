@@ -159,7 +159,7 @@ const Home = (props) => {
                     </div>
                     <LanguageSelector changeLanguage={changeLanguage} />
                 </div>
-                <h1>{t('welcome')}</h1>
+                <h2>{t('welcome')}</h2>
                 <label htmlFor="cycles">{t('numberCycle')}</label>
                 <input
                     type="number"

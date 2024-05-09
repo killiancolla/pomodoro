@@ -1,7 +1,6 @@
 @font-face {
   font-family: "Euclid";
-  src: local("Euclid Circular A Bold"),
-    url("../../public/fonts/Euclid\ Circular\ A\ Bold.ttf") format("truetype");
+  src: url("../../public/fonts/Euclid\ Circular\ A\ Regular.ttf") format("truetype");
 }
 
 * {
@@ -171,4 +170,8 @@ h2 {
   opacity: 0;
   visibility: hidden;
   transition-delay: 0s, 0.5s;
+}
+
+.Toastify div {
+  color: black;
 }
