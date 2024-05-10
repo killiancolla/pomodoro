@@ -86,10 +86,10 @@ const App = () => {
         onViewChange={handleFooterChange}
         onThemeChange={handleThemeChange}
       />
-      {/* <Login
+      <Login
         footerClear={handleFooterClear}
         footerDelete={handleFooterRemove}
-      /> */}
+      />
       <Footer
         footer={footer}
         footerDelete={handleFooterRemove}
