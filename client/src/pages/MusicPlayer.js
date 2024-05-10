@@ -29,6 +29,7 @@ const MusicPlayer = (props) => {
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [pausedTime, setPausedTime] = useState(0);
     const [totalPausedTime, setTotalPausedTime] = useState(0);
+    const [startTime, setStartTime] = useState(0);
     const [volume, setVolume] = useState(30);
 
     useEffect(() => {
@@ -59,25 +60,42 @@ const MusicPlayer = (props) => {
         }
     }, [audioContext, audioBuffer, currentTrackIndex, musics, isPlaying, position, volume]);
 
-    const playNextTrack = useCallback(() => {
+    const playNextTrack = useCallback((currentTime) => {
+        if (source) {
+            source.stop();
+        }
         setAudioBuffer(null);
-        setAudioContext(null);
+        setStartTime(currentTime);
         setPosition(0);
         setTotalPausedTime(0);
         setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % musics.musicInfo.length)
         setIsPlaying(true)
-    }, [musics.musicInfo.length]);
+    }, [musics.musicInfo.length, source]);
 
     const updatePosition = useCallback(() => {
-        if (!isPlaying || !source || !audioContext) return;
-        if (audioContext && source) {
-            const currentTime = audioContext.currentTime - totalPausedTime;
-            setPosition(Math.floor(currentTime));
-            if (currentTime >= audioBuffer?.duration) {
-                playNextTrack();
+        const update = async () => {
+            if (!isPlaying || !source || !audioContext) return;
+
+            if (audioContext.state === 'suspended') {
+                try {
+                    await audioContext.resume();
+                    console.log('AudioContext resumed');
+                } catch (error) {
+                    console.error('Error resuming AudioContext:', error);
+                }
             }
-        }
-    }, [totalPausedTime, audioBuffer?.duration, audioContext, isPlaying, playNextTrack, source]);
+
+            const currentTime = (audioContext.currentTime - startTime) - totalPausedTime;
+            setPosition(Math.floor(currentTime));
+
+            if (currentTime >= (audioBuffer?.duration)) {
+                playNextTrack(audioContext.currentTime);
+            }
+        };
+
+        update();
+    }, [totalPausedTime, audioBuffer?.duration, audioContext, isPlaying, playNextTrack, source, startTime]);
+
 
     useEffect(() => {
         if (isPlaying) {
@@ -86,20 +104,23 @@ const MusicPlayer = (props) => {
         }
     }, [isPlaying, audioContext, source, updatePosition]);
 
-    const playPreviousTrack = () => {
-        stop();
+    const playPreviousTrack = useCallback((currentTime) => {
+        if (source) {
+            source.stop();
+        }
         if (position <= 8) {
             setCurrentTrackIndex((prevIndex) => {
                 const newIndex = (prevIndex - 1) % musics.musicInfo.length;
+                console.log(newIndex < 0 ? musics.musicInfo.length - 1 : newIndex);
                 return newIndex < 0 ? musics.musicInfo.length - 1 : newIndex;
             });
         }
         setAudioBuffer(null);
-        setAudioContext(null);
+        setStartTime(currentTime)
         setPosition(0);
         setTotalPausedTime(0);
-        setIsPlaying(true)
-    };
+        setIsPlaying(true);
+    }, [source, musics.musicInfo.length, position]);
 
     const play = () => {
         if (audioContext && audioBuffer && !isPlaying) {
@@ -109,7 +130,7 @@ const MusicPlayer = (props) => {
             sourceNode.connect(gainNode);
             gainNode.connect(audioContext.destination);
             gainNode.gain.value = volume / 100;
-            sourceNode.start(0, position);
+            sourceNode.start(0, startTime + position);
             setSource(sourceNode);
             setIsPlaying(true);
             setTotalPausedTime(totalPausedTime + (audioContext.currentTime - pausedTime));
@@ -119,6 +140,7 @@ const MusicPlayer = (props) => {
     const stop = () => {
         if (source) {
             source.stop();
+            source.disconnect();
             setIsPlaying(false);
             setPausedTime(audioContext.currentTime);
         }
@@ -206,7 +228,7 @@ const MusicPlayer = (props) => {
                         )}
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: -1 }}>
-                        <IconButton onClick={playPreviousTrack} className='icon-button' aria-label="previous song">
+                        <IconButton onClick={() => playPreviousTrack(audioContext.currentTime)} className='icon-button' aria-label="previous song">
                             <FastRewindRounded fontSize="large" htmlColor={mainIconColor} />
                         </IconButton>
                         <IconButton className='icon-button' aria-label={isPlaying ? 'pause' : 'play'} onClick={isPlaying ? stop : play}>
@@ -216,7 +238,7 @@ const MusicPlayer = (props) => {
                                 <PlayArrowRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
                             )}
                         </IconButton>
-                        <IconButton onClick={playNextTrack} className='icon-button' aria-label="next song">
+                        <IconButton onClick={() => playNextTrack(audioContext.currentTime)} className='icon-button' aria-label="next song">
                             <FastForwardRounded fontSize="large" htmlColor={mainIconColor} />
                         </IconButton>
                     </Box>
