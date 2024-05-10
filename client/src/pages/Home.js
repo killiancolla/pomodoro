@@ -158,9 +158,9 @@ const Home = (props) => {
             <div ref={draggableRef} className={`glass-1 App`}>
                 <div className='header'>
                     <div className='red'></div>
-                    <div onClick={() => props.onViewChange({ "_id": 0, "name": "Timer" })} className='yellow'></div>
+                    <div onClick={() => props.onViewChange({ "_id": 0, "name": "timer" })} className='yellow'></div>
                     <div className='green'></div>
-                    <h2>Timer</h2>
+                    <h2>{t('timer')}</h2>
                 </div>
                 <div className='inline'>
                     <div className="dark-mode-toggle" onClick={toggleDarkMode}>

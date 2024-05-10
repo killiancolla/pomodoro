@@ -9,9 +9,11 @@ import Slider from "react-slick";
 import allThemes from '../data';
 import { useUser } from '../utils/UserContext';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const Themes = (props) => {
 
+    const { t } = useTranslation();
     const draggableRef = useRef(null);
     const { user, updateUser } = useUser();
     const sliderRef = useRef();
@@ -60,16 +62,16 @@ const Themes = (props) => {
             <div id="themes" ref={draggableRef} className={`glass-1`}>
                 <div className='header'>
                     <div className='red'></div>
-                    <div onClick={() => props.onViewChange({ "_id": 2, "name": "Theme" })} className='yellow'></div>
+                    <div onClick={() => props.onViewChange({ "_id": 2, "name": "theme" })} className='yellow'></div>
                     <div className='green'></div>
-                    <h2>Theme</h2>
+                    <h2>{t('theme')}</h2>
                 </div>
                 <div className="theme-selector">
                     <div id='carrousel'>
                         <Slider ref={sliderRef} {...settings}>
                             {Object.keys(props.themes).map((key) => (
                                 <div key={key}>
-                                    <h3 style={{ textAlign: "center" }}>{key}</h3>
+                                    <h3 style={{ textAlign: "center" }}>{t(key)}</h3>
                                 </div>
                             ))}
                         </Slider>

@@ -5,11 +5,13 @@ import '../styles/Todolist.css';
 import Draggable from 'react-draggable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 
 
 
 const ToDoList = (props) => {
 
+  const { t } = useTranslation();
   const draggableRef = useRef(null);
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -45,9 +47,9 @@ const ToDoList = (props) => {
       <div id="todolist" ref={draggableRef} className={`glass-1`}>
         <div className='header'>
           <div className='red'></div>
-          <div onClick={() => props.onViewChange({ "_id": 1, "name": "To Do List" })} className='yellow'></div>
+          <div onClick={() => props.onViewChange({ "_id": 1, "name": "todolist" })} className='yellow'></div>
           <div className='green'></div>
-          <h2>ToDo List</h2>
+          <h2>{t('todolist')}</h2>
         </div>
         <h3>{t('youdo')} {items.length > 0 ? Math.round(((items.filter((item) => item.checked).length) * 100 / items.length)) : 0}% {t('ofyourtask')}</h3>
         <input

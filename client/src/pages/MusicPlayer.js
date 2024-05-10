@@ -13,6 +13,7 @@ import FastForwardRounded from '@mui/icons-material/FastForwardRounded';
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
 import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
+import { t } from 'i18next';
 
 const MusicPlayer = (props) => {
 
@@ -170,9 +171,9 @@ const MusicPlayer = (props) => {
                 <div className={`widget`}>
                     <div className='header'>
                         <div className='red'></div>
-                        <div onClick={() => props.onViewChange({ "_id": 3, "name": "Music Player" })} className='yellow'></div>
+                        <div onClick={() => props.onViewChange({ "_id": 3, "name": "musicplayer" })} className='yellow'></div>
                         <div className='green'></div>
-                        <h2>Music Player</h2>
+                        <h2>{t('musicplayer')}</h2>
                     </div>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <div className='cover-image'>

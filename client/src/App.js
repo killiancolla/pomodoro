@@ -16,9 +16,9 @@ const App = () => {
 
   const { user, updateUser, logoutUser } = useUser();
   const [backgroundImage, setBackgroundImage] = useState('/img/coffee.jpeg');
-  const [theme, setTheme] = useState(allThemes["Coffee"])
+  const [theme, setTheme] = useState(allThemes["cafe"])
   const [footer, setFooter] = useState([
-    { "_id": 3, "name": "Music Player" }, { "_id": 1, "name": "ToDoList" }, { "_id": 2, "name": "Theme" }
+    { "_id": 3, "name": "musicplayer" }, { "_id": 1, "name": "todolist" }, { "_id": 2, "name": "theme" }
   ])
   const [themeInit, setThemeInit] = useState(false);
 
@@ -58,7 +58,7 @@ const App = () => {
 
   const handleFooterClear = () => {
     setFooter([
-      { "_id": 3, "name": "Music Player" }, { "_id": 1, "name": "ToDoList" }, { "_id": 2, "name": "Theme" }, { "_id": 0, "name": "Timer" }
+      { "_id": 3, "name": "musicplayer" }, { "_id": 1, "name": "todolist" }, { "_id": 2, "name": "theme" }, { "_id": 0, "name": "timer" }
     ]);
   };
 
