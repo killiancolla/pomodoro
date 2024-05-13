@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Home from './pages/Home';
 import MusicPlayer from './pages/MusicPlayer';
 import ToDoList from './pages/Todolist';
+import Loading from './pages/Loading';
 import 'remixicon/fonts/remixicon.css'
 import './styles/main.css'
 import Themes from './pages/Themes';
 import Footer from './pages/Footer';
+import Message from './pages/Message';
 import Login from './pages/Login';
 import allThemes from './data';
 import { useUser } from './utils/UserContext';
@@ -16,9 +18,10 @@ const App = () => {
 
   const { user, updateUser, logoutUser } = useUser();
   const [backgroundImage, setBackgroundImage] = useState('/img/coffee.jpeg');
-  const [theme, setTheme] = useState(allThemes["cafe"])
+  const [theme, setTheme] = useState(allThemes["cafe"]);
+  const [loading, setLoading] = useState(true);
   const [footer, setFooter] = useState([
-    { "_id": 3, "name": "musicplayer" }, { "_id": 1, "name": "todolist" }, { "_id": 2, "name": "theme" }
+    { "_id": 0, "name": "timer" }, { "_id": 3, "name": "musicplayer" }, { "_id": 1, "name": "todolist" }, { "_id": 2, "name": "theme" }
   ])
   const [themeInit, setThemeInit] = useState(false);
 
@@ -28,6 +31,14 @@ const App = () => {
     backgroundSize: 'cover',
     height: '100vh'
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [setLoading]);
 
   useEffect(() => {
     if (user && user.favTheme && allThemes[user.favTheme] && !themeInit) {
@@ -64,7 +75,9 @@ const App = () => {
 
   return (
     <div style={appStyle}>
+      <Loading opacity={loading} />
       <ToastContainer />
+      <Message footerDelete={handleFooterRemove} />
       <Home
         show={footer.filter((val) => val._id === 0).length === 0}
         onViewChange={handleFooterChange}

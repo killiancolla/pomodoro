@@ -29,15 +29,9 @@ const LanguageSelector = ({ changeLanguage }) => {
                             style={{ cursor: 'pointer' }}
                         />
                         <img
-                            src="https://www.worldometers.info/img/flags/gm-flag.gif"
-                            alt="German"
-                            onClick={() => changeLanguage('de')}
-                            style={{ cursor: 'pointer' }}
-                        />
-                        <img
-                            src="https://www.worldometers.info/img/flags/sp-flag.gif"
-                            alt="Spain"
-                            onClick={() => changeLanguage('es')}
+                            src="https://www.worldometers.info/img/flags/it-flag.gif"
+                            alt="Italian"
+                            onClick={() => changeLanguage('it')}
                             style={{ cursor: 'pointer' }}
                         />
                         <img
