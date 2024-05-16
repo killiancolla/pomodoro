@@ -1,12 +1,12 @@
 // src/ToDoList.js
+import React from 'react';
 import '../styles/Themes.css';
 import Draggable from 'react-draggable';
 import { useEffect, useRef, useMemo } from 'react';
-import React from 'react';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import allThemes from '../data';
+import allThemes from '../data.jsx';
 import { useUser } from '../utils/UserContext';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import '../styles/App.css';
-import LanguageSelector from '../pages/LanguageSelector';
+import LanguageSelector from './LanguageSelector.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';

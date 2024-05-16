@@ -3,10 +3,10 @@ import '../styles/Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPerson } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios"
-import { useUser } from '../utils/UserContext';
+import { useUser } from '../utils/UserContext.jsx';
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
-import MyChart from '../utils/MyChart';
+import MyChart from '../utils/MyChart.jsx';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 

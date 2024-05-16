@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import Home from './pages/Home';
-import MusicPlayer from './pages/MusicPlayer';
-import ToDoList from './pages/Todolist';
-import Loading from './pages/Loading';
+import Home from './pages/Home.jsx';
+import MusicPlayer from './pages/MusicPlayer.jsx';
+import ToDoList from './pages/Todolist.jsx';
+import Loading from './pages/Loading.jsx';
 import 'remixicon/fonts/remixicon.css'
 import './styles/main.css'
-import Themes from './pages/Themes';
-import Footer from './pages/Footer';
-import Message from './pages/Message';
-import Login from './pages/Login';
-import allThemes from './data';
-import { useUser } from './utils/UserContext';
+import Themes from './pages/Themes.jsx';
+import Footer from './pages/Footer.jsx';
+import Message from './pages/Message.jsx';
+import allThemes from './data.jsx';
+import { useUser } from './utils/UserContext.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -99,10 +98,6 @@ const App = () => {
         onViewChange={handleFooterChange}
         onThemeChange={handleThemeChange}
       />
-      {/* <Login
-        footerClear={handleFooterClear}
-        footerDelete={handleFooterRemove}
-      /> */}
       <Footer
         footer={footer}
         footerDelete={handleFooterRemove}

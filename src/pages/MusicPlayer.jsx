@@ -175,6 +175,7 @@ const MusicPlayer = (props) => {
                         <div className='green'></div>
                         <h2>{t('musicplayer')}</h2>
                     </div>
+
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <div className='cover-image'>
                             <img alt="Logo " src={`${musics.musicInfo[currentTrackIndex].image}`} />
