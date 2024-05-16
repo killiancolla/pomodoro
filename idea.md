@@ -4,3 +4,4 @@ Correctifs :
 
 Ajouts :
 - compte (enregistrement temps passé à étudier aujourd'hui, temps passé au total, graphique, ...)
+- nombre de session infinie
